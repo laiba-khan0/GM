@@ -1,0 +1,520 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
+ */
+package GM;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import javax.swing.JOptionPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
+
+/**
+ *
+ * @author LENOVO
+ */
+public class Products extends javax.swing.JFrame {
+
+    /**
+     * Creates new form Products
+     */
+    public Products() {
+        initComponents();
+        fillTable();
+        addTableClickListener();
+        fillCategoryComboBox();
+    }
+         private void updateQuantity() {
+        String quantityText = proquan.getText();
+
+        try {
+            // Establishing database connection
+            Connection conn = null;
+           PreparedStatement pstmt = null;
+            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/gms", "root", "root");
+
+            // Update the quantity in the database
+            String query = "UPDATE product SET quantity = quantity - " + proquan + " WHERE Productid = ?";
+            pstmt = conn.prepareStatement(query);
+            pstmt.setInt(1, 1); // Assuming product_id 1, you can modify this according to your database schema
+            pstmt.executeUpdate();
+
+//            JOptionPane.showMessageDialog(this, "Quantity updated successfully!");
+
+            // Closing database connection
+           
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error updating quantity: " + ex.getMessage());
+        }
+    }
+    
+     private void addTableClickListener() {
+        jTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+          
+            public void valueChanged(ListSelectionEvent event) {
+                if (!event.getValueIsAdjusting()) {
+                    int selectedRow = jTable.getSelectedRow();
+                    if (selectedRow != -1) {
+                        String Proid = jTable.getValueAt(selectedRow, 0).toString();
+                        String Proname = jTable.getValueAt(selectedRow, 1).toString();
+                        String Proquan = jTable.getValueAt(selectedRow, 2).toString();
+                        String prize = jTable.getValueAt(selectedRow, 3).toString();
+
+
+                        // Set values to text fields
+                        proid.setText(Proid);
+                        proname.setText(Proname);
+                        proquan.setText(Proquan);
+                        pprize.setText(prize);
+
+                    }
+                }
+            }
+        });
+    }
+    
+     private void fillTable() {
+        DefaultTableModel model1 = (DefaultTableModel) jTable.getModel();
+        model1.setRowCount(0); // Clear existing rows
+
+        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/gms", "root", "root");
+             PreparedStatement pstmt = conn.prepareStatement("SELECT Productid, Productname, Quantity, Category, productprize FROM product");
+             ResultSet rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                String Proid = rs.getString("Productid");
+                String Proname = rs.getString("Productname");
+                String Proquan = rs.getString("Quantity");
+                String Procate = rs.getString("Category");
+                String prize = rs.getString("productprize");
+
+                model1.addRow(new Object[]{Proid, Proname, Proquan, Procate, prize});
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Database error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+     
+     private void fillCategoryComboBox() {
+    procategory.removeAllItems(); // Clear existing items
+    try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/gms", "root", "root");
+         PreparedStatement pstmt = conn.prepareStatement("SELECT CategoryName FROM category");
+         ResultSet rs = pstmt.executeQuery()) {
+
+        while (rs.next()) {
+            String categoryName = rs.getString("CategoryName");
+            procategory.addItem(categoryName); // Add category to combo box
+        }
+    } catch (SQLException ex) {
+        ex.printStackTrace();
+        JOptionPane.showMessageDialog(this, "Database error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    }
+}
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jPanel1 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        proname = new javax.swing.JTextField();
+        proid = new javax.swing.JTextField();
+        proquan = new javax.swing.JTextField();
+        jadd = new javax.swing.JButton();
+        jupdate = new javax.swing.JButton();
+        jdelete = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable = new javax.swing.JTable();
+        jbac = new javax.swing.JButton();
+        jLabel6 = new javax.swing.JLabel();
+        pprize = new javax.swing.JTextField();
+        procategory = new javax.swing.JComboBox<>();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
+
+        jPanel1.setBackground(new java.awt.Color(204, 204, 204));
+
+        jLabel1.setFont(new java.awt.Font("Showcard Gothic", 1, 36)); // NOI18N
+        jLabel1.setText("Products");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(198, 198, 198)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(51, Short.MAX_VALUE)
+                .addComponent(jLabel1)
+                .addGap(25, 25, 25))
+        );
+
+        jLabel2.setFont(new java.awt.Font("Showcard Gothic", 0, 14)); // NOI18N
+        jLabel2.setText("Product id");
+
+        jLabel3.setFont(new java.awt.Font("Showcard Gothic", 0, 14)); // NOI18N
+        jLabel3.setText("Quantity");
+
+        jLabel4.setFont(new java.awt.Font("Showcard Gothic", 0, 14)); // NOI18N
+        jLabel4.setText("Category");
+
+        jLabel5.setFont(new java.awt.Font("Showcard Gothic", 0, 14)); // NOI18N
+        jLabel5.setText("Product Name");
+
+        jadd.setBackground(new java.awt.Color(204, 204, 204));
+        jadd.setFont(new java.awt.Font("Showcard Gothic", 0, 14)); // NOI18N
+        jadd.setText("Add");
+        jadd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jaddActionPerformed(evt);
+            }
+        });
+
+        jupdate.setBackground(new java.awt.Color(204, 204, 204));
+        jupdate.setFont(new java.awt.Font("Showcard Gothic", 0, 14)); // NOI18N
+        jupdate.setText("Update");
+        jupdate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jupdateActionPerformed(evt);
+            }
+        });
+
+        jdelete.setBackground(new java.awt.Color(204, 204, 204));
+        jdelete.setFont(new java.awt.Font("Showcard Gothic", 0, 14)); // NOI18N
+        jdelete.setText("Delete");
+        jdelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jdeleteActionPerformed(evt);
+            }
+        });
+
+        jTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "ProID", "ProName ", "Quantity", "Category ", "Product prize"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(jTable);
+
+        jbac.setFont(new java.awt.Font("Showcard Gothic", 0, 12)); // NOI18N
+        jbac.setText("Back");
+        jbac.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbacActionPerformed(evt);
+            }
+        });
+
+        jLabel6.setFont(new java.awt.Font("Showcard Gothic", 0, 14)); // NOI18N
+        jLabel6.setText("p.prize");
+
+        procategory.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(221, 221, 221)
+                        .addComponent(jadd)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jupdate)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jdelete)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(29, 29, 29)
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(proid, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(proname, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 114, Short.MAX_VALUE)
+                        .addComponent(jbac))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(jLabel6)
+                        .addGap(12, 12, 12)
+                        .addComponent(pprize, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(proquan, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(33, 33, 33)
+                        .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(procategory, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(41, 41, 41)))
+                .addGap(18, 18, 18))
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(26, 26, 26)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel2)
+                            .addComponent(proid, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel5)
+                            .addComponent(proname, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jbac)))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(proquan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel6)
+                    .addComponent(jLabel4)
+                    .addComponent(pprize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(procategory, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jupdate)
+                    .addComponent(jadd)
+                    .addComponent(jdelete))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+
+        pack();
+        setLocationRelativeTo(null);
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void jbacActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbacActionPerformed
+        // TODO add your handling code here:
+        this.toBack();
+        Dashboard dashboard = new Dashboard();
+        dashboard.setVisible(true);
+        dashboard.toFront();
+    }//GEN-LAST:event_jbacActionPerformed
+
+    private void jaddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jaddActionPerformed
+        // TODO add your handling code here:
+        
+     String Proid = proid.getText();
+    String Proname = proname.getText();
+    String Proquan = proquan.getText();
+    String prize = pprize.getText();
+    String category = procategory.getSelectedItem().toString(); // Get selected category
+
+    if (Proid.isEmpty() || Proname.isEmpty() || Proquan.isEmpty() || category.isEmpty() || prize.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Please fill out all fields");
+        return;
+    }
+
+    Connection conn = null;
+    PreparedStatement pstmt = null;
+    
+    try {
+        conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/gms", "root", "root");
+        String query = "INSERT INTO product (Productid, Productname, Quantity, Category, productprize) VALUES (?, ?, ?, ?, ?)";
+        pstmt = conn.prepareStatement(query);
+        pstmt.setString(1, Proid);
+        pstmt.setString(2, Proname);
+        pstmt.setString(3, Proquan);
+        pstmt.setString(4, category); // Add category to query
+        pstmt.setString(5, prize);
+
+        int rowsInserted = pstmt.executeUpdate();
+        
+        if (rowsInserted > 0) { 
+            JOptionPane.showMessageDialog(this, "Added successfully");
+            fillTable();
+            proid.setText("");
+            proname.setText("");
+            proquan.setText("");
+            pprize.setText("");
+        } else {
+            JOptionPane.showMessageDialog(null, "Fill all the Data");
+        }
+    } catch (SQLException ex) {
+        ex.printStackTrace();
+        JOptionPane.showMessageDialog(this, "Database error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    } 
+        
+    }//GEN-LAST:event_jaddActionPerformed
+
+    private void jupdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jupdateActionPerformed
+        // TODO add your handling code here:
+    String Proid = proid.getText();
+    String Proname = proname.getText();
+    String Proquan = proquan.getText();
+    String prize = pprize.getText();
+    String category = procategory.getSelectedItem().toString(); // Get selected category
+
+    if (Proid.isEmpty() || Proname.isEmpty() || Proquan.isEmpty() || category.isEmpty() || prize.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Please fill out all fields");
+        return;
+    }
+
+    Connection conn = null;
+    PreparedStatement pstmt = null;
+
+    try {
+        conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/gms", "root", "root");
+        String query = "UPDATE product SET Productname = ?, Quantity = ?, Category = ?, productprize = ? WHERE Productid = ?";
+        pstmt = conn.prepareStatement(query);
+        pstmt.setString(1, Proname);
+        pstmt.setString(2, Proquan);
+        pstmt.setString(3, category); // Add category to query
+        pstmt.setString(4, prize);
+        pstmt.setString(5, Proid);
+
+        int rowsUpdated = pstmt.executeUpdate();
+        
+        if (rowsUpdated == 1) {
+            JOptionPane.showMessageDialog(this, "Update Successfully");
+            fillTable();
+            proid.setText("");
+            proname.setText("");
+            proquan.setText("");
+            pprize.setText("");
+        } else {
+            JOptionPane.showMessageDialog(this, "Update failed.");
+        }
+    } catch (SQLException ex) {
+        ex.printStackTrace();
+        JOptionPane.showMessageDialog(this, "Database error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    }
+    }//GEN-LAST:event_jupdateActionPerformed
+
+    private void jdeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jdeleteActionPerformed
+        // TODO add your handling code here:
+        String Proid = proid.getText();
+        String Proname = proname.getText();
+        String Proquan = proquan.getText();
+        String prize = pprize.getText();
+        
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+
+        try {
+          // Check for empty fields
+         if (Proid.isEmpty() || Proname.isEmpty() || Proquan.isEmpty() || prize.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Please fill out all fields");
+        return;
+    }
+        
+
+          conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/gms", "root", "root");
+          String query = "DELETE FROM product WHERE Productid = ?";
+          pstmt = conn.prepareStatement(query);
+          pstmt.setString(1, Proid);
+
+        proid.setText("");
+        proname.setText("");
+        proquan.setText("");
+        pprize.setText("");
+        
+          int rowsUpdated = pstmt.executeUpdate();
+          if (rowsUpdated > 0) {
+            JOptionPane.showMessageDialog(this, "Delete  Successfully");
+            fillTable();
+          } else {
+            JOptionPane.showMessageDialog(this, "Delete failed. ");
+          }
+
+        } catch (SQLException ex) {
+          ex.printStackTrace();
+          JOptionPane.showMessageDialog(this, "Database error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        } 
+    }//GEN-LAST:event_jdeleteActionPerformed
+
+    
+    
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(Products.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(Products.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(Products.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(Products.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new Products().setVisible(true);
+            }
+        });
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    javax.swing.JLabel jLabel1;
+    javax.swing.JLabel jLabel2;
+    javax.swing.JLabel jLabel3;
+    javax.swing.JLabel jLabel4;
+    javax.swing.JLabel jLabel5;
+    javax.swing.JLabel jLabel6;
+    javax.swing.JPanel jPanel1;
+    javax.swing.JScrollPane jScrollPane1;
+    javax.swing.JTable jTable;
+    javax.swing.JButton jadd;
+    javax.swing.JButton jbac;
+    javax.swing.JButton jdelete;
+    javax.swing.JButton jupdate;
+    javax.swing.JTextField pprize;
+    javax.swing.JComboBox<String> procategory;
+    javax.swing.JTextField proid;
+    javax.swing.JTextField proname;
+    javax.swing.JTextField proquan;
+    // End of variables declaration//GEN-END:variables
+}
